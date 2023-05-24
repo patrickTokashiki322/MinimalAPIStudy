@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace LicaoDeCasa
 {
@@ -8,8 +9,7 @@ namespace LicaoDeCasa
         {
             var builder = WebApplication.CreateBuilder(args);
             var app = builder.Build();
-            var configuration = app.Configuration;
-            ListCar.Init(configuration);
+            builder.Services.AddDbContext<AplicationDbContext>();
 
             app.MapPost("/cars", (Car car) =>
             {
@@ -20,7 +20,8 @@ namespace LicaoDeCasa
                     ListCar.Add(car);
 
                     return Results.Created($"/cars/{car.Code}", car.Code);
-                } else
+                }
+                else
                 {
                     return Results.Conflict();
                 }
@@ -30,11 +31,12 @@ namespace LicaoDeCasa
             app.MapGet("/cars", ([FromQuery] string code) =>
             {
                 var carFind = ListCar.Get(code);
-                
+
                 if (carFind != null)
                 {
                     return Results.Ok(carFind);
-                } else
+                }
+                else
                 {
                     return Results.NotFound();
                 }
@@ -48,7 +50,8 @@ namespace LicaoDeCasa
                 {
                     ListCar.Delete(code);
                     return Results.Ok();
-                } else
+                }
+                else
                 {
                     return Results.NotFound();
                 }
@@ -65,18 +68,19 @@ namespace LicaoDeCasa
                     savedCar.Age = car.Age;
 
                     return Results.Ok(savedCar);
-                } else
+                }
+                else
                 {
                     return Results.NotFound();
                 }
 
             });
-            
+
             if (app.Environment.IsStaging())
             {
                 app.MapGet("/environment/test", () =>
                 {
-                    
+
                 });
             }
 

@@ -20,11 +20,5 @@ namespace LicaoDeCasa
 
             Cars.Remove(findCar);
         }
-
-        public static void Init(IConfiguration configuration)
-        {
-            var cars = configuration.GetSection("Cars").Get<List<Car>>();
-            Cars = cars;
-        }
     }
 }
